@@ -5,11 +5,12 @@ const app: HTMLDivElement = document.querySelector("#app")!;
 const gameName = "My okay game";
 document.title = gameName;
 let counter: number = 0;
+let lastTime: number = 0;
 
 function updateCounterDisplay() {
   const counterDiv = document.getElementById("counterDisplay");
   if (counterDiv) {
-    counterDiv.innerText = `${counter} presses!`;
+    counterDiv.innerText = `${Math.floor(counter)} presses!`;
   }
 }
 function addrandomButton() {
@@ -37,15 +38,23 @@ function addrandomButton() {
   document.body.appendChild(counterDiv);
 }
 
-function incrementCounterAutomatically() {
-    setInterval(() => {
-        counter++;
-        updateCounterDisplay();
-    }, 1000); // Increments every 1000ms (1 second)
+function animateCounter(timestamp: number) {
+    if (!lastTime) lastTime = timestamp;
+
+    const deltaTime = timestamp - lastTime;
+
+    counter += deltaTime / 1000;
+
+    lastTime = timestamp;
+
+    updateCounterDisplay();
+
+    requestAnimationFrame(animateCounter);
 }
 
 addrandomButton();
-incrementCounterAutomatically();
+
+requestAnimationFrame(animateCounter);
 const header = document.createElement("h1");
 header.innerHTML = gameName;
 app.append(header);
