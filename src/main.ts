@@ -14,11 +14,12 @@ function updateCounterDisplay() {
     counterDiv.innerText = `${Math.floor(counter)} shares!`;
   }
 
-  const upgradeButton = document.getElementById("upgradeButton") as HTMLButtonElement;
-    if (upgradeButton) {
-        upgradeButton.disabled = counter < 10; // Disable if counter is less than 10
-    }
-
+  const upgradeButton = document.getElementById(
+    "upgradeButton",
+  ) as HTMLButtonElement;
+  if (upgradeButton) {
+    upgradeButton.disabled = counter < 10; // Disable if counter is less than 10
+  }
 }
 function addrandomButton() {
   const button = document.createElement("button");
@@ -47,27 +48,27 @@ function addrandomButton() {
 }
 
 function addUpgradeButton() {
-    const upgradeButton = document.createElement("button");
-    upgradeButton.id = "upgradeButton";
-    
-    upgradeButton.innerText = "Buy Upgrade (+1 Growth Rate for 10 stonks)";
-    
-    upgradeButton.style.fontSize = "16px";
-    upgradeButton.style.marginTop = "10px";
-    upgradeButton.style.padding = "10px 20px";
-    upgradeButton.style.cursor = "pointer";
+  const upgradeButton = document.createElement("button");
+  upgradeButton.id = "upgradeButton";
 
-    upgradeButton.disabled = true;
+  upgradeButton.innerText = "Buy Upgrade (+1 Growth Rate for 10 stonks)";
 
-    upgradeButton.addEventListener("click", () => {
-        if (counter >= 10) {
-            counter -= 10;
-            growthRate += 1; 
-            updateCounterDisplay();
-        }
-    });
+  upgradeButton.style.fontSize = "16px";
+  upgradeButton.style.marginTop = "10px";
+  upgradeButton.style.padding = "10px 20px";
+  upgradeButton.style.cursor = "pointer";
 
-    document.body.appendChild(upgradeButton);
+  upgradeButton.disabled = true;
+
+  upgradeButton.addEventListener("click", () => {
+    if (counter >= 10) {
+      counter -= 10;
+      growthRate += 1;
+      updateCounterDisplay();
+    }
+  });
+
+  document.body.appendChild(upgradeButton);
 }
 
 function animateCounter(timestamp: number) {
@@ -75,7 +76,7 @@ function animateCounter(timestamp: number) {
 
   const deltaTime = timestamp - lastTime;
 
-  counter += deltaTime / 1000;
+  counter += (growthRate * deltaTime) / 1000;
 
   lastTime = timestamp;
 
