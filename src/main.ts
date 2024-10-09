@@ -7,10 +7,10 @@ document.title = gameName;
 let counter: number = 0;
 
 function updateCounterDisplay() {
-    const counterDiv = document.getElementById("counterDisplay");
-    if (counterDiv) {
-        counterDiv.innerText = `${counter} presses!`;
-    }
+  const counterDiv = document.getElementById("counterDisplay");
+  if (counterDiv) {
+    counterDiv.innerText = `${counter} presses!`;
+  }
 }
 function addrandomButton() {
   const button = document.createElement("button");
@@ -23,20 +23,29 @@ function addrandomButton() {
   button.addEventListener("click", () => {
     counter++;
     updateCounterDisplay();
-});
+  });
+
   document.body.appendChild(button);
 
   const counterDiv = document.createElement("div");
-    counterDiv.id = "counterDisplay";
-    counterDiv.style.fontSize = "18px";
-    counterDiv.style.marginTop = "10px";
-    
-    updateCounterDisplay();
+  counterDiv.id = "counterDisplay";
+  counterDiv.style.fontSize = "18px";
+  counterDiv.style.marginTop = "10px";
 
-    document.body.appendChild(counterDiv);
+  updateCounterDisplay();
+
+  document.body.appendChild(counterDiv);
+}
+
+function incrementCounterAutomatically() {
+    setInterval(() => {
+        counter++;
+        updateCounterDisplay();
+    }, 1000); // Increments every 1000ms (1 second)
 }
 
 addrandomButton();
+incrementCounterAutomatically();
 const header = document.createElement("h1");
 header.innerHTML = gameName;
 app.append(header);
