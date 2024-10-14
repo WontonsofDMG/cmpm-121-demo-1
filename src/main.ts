@@ -15,9 +15,9 @@ const itemsPurchased: { [key: string]: number } = {
 };
 
 const upgrades = [
-  { name: "PennyStocks", cost: 10, growthRateIncrease: 0.1 },
-  { name: "BlueChips", cost: 100, growthRateIncrease: 2.0 },
-  { name: "HedgeFunds", cost: 1000, growthRateIncrease: 50 }
+  { name: "PennyStocks", initialCost: 10, currentCost: 10, growthRateIncrease: 0.1 },
+  { name: "BlueChips", initialCost: 100, currentCost: 100, growthRateIncrease: 2.0 },
+  { name: "HedgeFunds", initialCost: 1000, currentCost: 1000, growthRateIncrease: 50 }
 ];
 
 function updateDisplay() {
@@ -42,11 +42,13 @@ function updateDisplay() {
   }
 
   upgrades.forEach(upgrade => {
-      const button = document.getElementById(`upgrade${upgrade.name}`) as HTMLButtonElement;
-      if (button) {
-          button.disabled = counter < upgrade.cost;
-      }
-  });
+    const button = document.getElementById(`upgrade${upgrade.name}`) as HTMLButtonElement;
+    if (button) {
+        button.disabled = counter < upgrade.currentCost;
+        button.innerText = `Buy ${upgrade.name} (+${upgrade.growthRateIncrease.toFixed(1)} stonks/sec for ${upgrade.currentCost.toFixed(1)} stonks)`;
+    }
+});
+
 }
 
 function addMainButton() {
@@ -89,7 +91,7 @@ function addUpgradeButtons() {
       const upgradeButton = document.createElement("button");
       upgradeButton.id = `upgrade${upgrade.name}`;
       
-      upgradeButton.innerText = `Buy ${upgrade.name} (+${upgrade.growthRateIncrease.toFixed(1)} stonks/sec for ${upgrade.cost} stonks)`;
+      upgradeButton.innerText = `Buy ${upgrade.name} (+${upgrade.growthRateIncrease.toFixed(1)} stonks/sec for ${upgrade.currentCost.toFixed(1)} stonks)`;
       
       upgradeButton.style.fontSize = "16px";
       upgradeButton.style.marginTop = "10px";
@@ -99,13 +101,17 @@ function addUpgradeButtons() {
       upgradeButton.disabled = true;
 
       upgradeButton.addEventListener("click", () => {
-          if (counter >= upgrade.cost) {
-              counter -= upgrade.cost;
-              growthRate += upgrade.growthRateIncrease; // Increase the growth rate
-              itemsPurchased[upgrade.name]++; // Track the number of items purchased
-              updateDisplay();
-          }
-      });
+        if (counter >= upgrade.currentCost) {
+            counter -= upgrade.currentCost;
+            growthRate += upgrade.growthRateIncrease; // Increase the growth rate
+            itemsPurchased[upgrade.name]++; // Track the number of items purchased
+
+            // Increase the price by a factor of 1.15
+            upgrade.currentCost *= 1.15;
+
+            updateDisplay();
+        }
+    });
 
       document.body.appendChild(upgradeButton);
   });
