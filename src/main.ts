@@ -4,21 +4,28 @@ const app: HTMLDivElement = document.querySelector("#app")!;
 
 const gameName = "Rising Stonks!";
 document.title = gameName;
+
+interface Item {
+  name: string;
+  cost: number;
+  rate: number;
+}
+
+const availableItems: Item[] = [
+  { name: "Penny Stocks", cost: 10, rate: 0.1 },
+  { name: "Blue Chips", cost: 100, rate: 2 },
+  { name: "Hedge Funds", cost: 1000, rate: 50 }
+];
+
 let counter: number = 0;
 let lastTime: number = 0;
 let growthRate: number = 0;
 
-const itemsPurchased: { [key: string]: number } = {
-  PennyStocks: 0,
-  BlueChips: 0,
-  HedgeFunds: 0
-};
+const itemsPurchased: { [key: string]: number } = {};
 
-const upgrades = [
-  { name: "PennyStocks", initialCost: 10, currentCost: 10, growthRateIncrease: 0.1 },
-  { name: "BlueChips", initialCost: 100, currentCost: 100, growthRateIncrease: 2.0 },
-  { name: "HedgeFunds", initialCost: 1000, currentCost: 1000, growthRateIncrease: 50 }
-];
+availableItems.forEach(item => {
+  itemsPurchased[item.name] = 0;
+});
 
 function updateDisplay() {
   const counterDiv = document.getElementById("counterDisplay");
@@ -33,29 +40,25 @@ function updateDisplay() {
 
   const upgradeStatusDiv = document.getElementById("upgradeStatus");
   if (upgradeStatusDiv) {
-      upgradeStatusDiv.innerHTML = `
-            Items Purchased: <br>
-            Penny Stocks: ${itemsPurchased.PennyStocks} <br>
-            Blue Chips: ${itemsPurchased.BlueChips} <br>
-            Hedge Funds: ${itemsPurchased.HedgeFunds}
-      `;
+      let statusHTML = `Items Purchased: <br>`;
+      availableItems.forEach(item => {
+          statusHTML += `${item.name}: ${itemsPurchased[item.name]} <br>`;
+      });
+      upgradeStatusDiv.innerHTML = statusHTML;
   }
 
-  upgrades.forEach(upgrade => {
-    const button = document.getElementById(`upgrade${upgrade.name}`) as HTMLButtonElement;
-    if (button) {
-        button.disabled = counter < upgrade.currentCost;
-        button.innerText = `Buy ${upgrade.name} (+${upgrade.growthRateIncrease.toFixed(1)} stonks/sec for ${upgrade.currentCost.toFixed(1)} stonks)`;
-    }
-});
-
+  availableItems.forEach(item => {
+      const button = document.getElementById(`upgrade${item.name.replace(/\s+/g, '')}`) as HTMLButtonElement;
+      if (button) {
+          button.disabled = counter < item.cost;
+          button.innerText = `Buy ${item.name} (+${item.rate.toFixed(1)} stonks/sec for ${Math.floor(item.cost)} stonks)`;
+      }
+  });
 }
 
 function addMainButton() {
   const button = document.createElement("button");
-
   button.innerText = "📈 Click Me for Stonks!";
-
   button.style.fontSize = "20px";
   button.style.padding = "10px 20px";
   button.style.cursor = "pointer";
@@ -87,36 +90,29 @@ function addMainButton() {
 }
 
 function addUpgradeButtons() {
-  upgrades.forEach(upgrade => {
+  availableItems.forEach(item => {
       const upgradeButton = document.createElement("button");
-      upgradeButton.id = `upgrade${upgrade.name}`;
-      
-      upgradeButton.innerText = `Buy ${upgrade.name} (+${upgrade.growthRateIncrease.toFixed(1)} stonks/sec for ${upgrade.currentCost.toFixed(1)} stonks)`;
-      
+      upgradeButton.id = `upgrade${item.name.replace(/\s+/g, '')}`;
+      upgradeButton.innerText = `Buy ${item.name} (+${item.rate.toFixed(1)} stonks/sec for ${Math.floor(item.cost)} stonks)`;
       upgradeButton.style.fontSize = "16px";
       upgradeButton.style.marginTop = "10px";
       upgradeButton.style.padding = "10px 20px";
       upgradeButton.style.cursor = "pointer";
-
       upgradeButton.disabled = true;
 
       upgradeButton.addEventListener("click", () => {
-        if (counter >= upgrade.currentCost) {
-            counter -= upgrade.currentCost;
-            growthRate += upgrade.growthRateIncrease; // Increase the growth rate
-            itemsPurchased[upgrade.name]++; // Track the number of items purchased
-
-            // Increase the price by a factor of 1.15
-            upgrade.currentCost *= 1.15;
-
-            updateDisplay();
-        }
-    });
+          if (counter >= item.cost) {
+              counter -= Math.floor(item.cost);
+              growthRate += item.rate;
+              itemsPurchased[item.name]++;
+              item.cost *= 1.15; 
+              updateDisplay();
+          }
+      });
 
       document.body.appendChild(upgradeButton);
   });
 }
-
 
 function animateCounter(timestamp: number) {
   if (!lastTime) lastTime = timestamp;
