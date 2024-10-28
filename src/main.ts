@@ -46,6 +46,7 @@ const availableItems: Item[] = [
 ];
 
 let counter: number = 0;
+const OneSecond: number = 1000;
 let lastTime: number = 0;
 let growthRate: number = 0;
 
@@ -149,7 +150,7 @@ function animateCounter(timestamp: number) {
 
   const deltaTime = timestamp - lastTime;
 
-  counter += (growthRate * deltaTime) / 1000;
+  counter += (growthRate * deltaTime) / OneSecond;
 
   lastTime = timestamp;
 
