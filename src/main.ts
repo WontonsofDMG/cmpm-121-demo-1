@@ -47,6 +47,7 @@ const availableItems: Item[] = [
 
 let counter: number = 0;
 const OneSecond: number = 1000;
+const CostScale: number = 1.15;
 let lastTime: number = 0;
 let growthRate: number = 0;
 
@@ -136,7 +137,7 @@ function addUpgradeButtons() {
         counter -= Math.floor(item.cost);
         growthRate += item.rate;
         itemsPurchased[item.name]++;
-        item.cost *= 1.15;
+        item.cost *= CostScale;
         updateDisplay();
       }
     });
